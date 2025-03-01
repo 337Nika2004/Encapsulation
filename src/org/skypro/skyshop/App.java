@@ -21,7 +21,6 @@ public class App {
         basket.addProduct(product3);
         basket.addProduct(product4);
         basket.addProduct(product5);
-
         // Попытка добавить продукт в заполненную корзину
         basket.addProduct(product6);
 
