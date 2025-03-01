@@ -15,7 +15,6 @@ public class App {
 
         // Создаем корзину
         ProductBasket basket = new ProductBasket();
-
         // Добавляем продукты в корзину
         basket.addProduct(product1);
         basket.addProduct(product2);
