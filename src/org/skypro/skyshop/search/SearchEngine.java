@@ -1,46 +1,26 @@
 package org.skypro.skyshop.search;
 
+import java.util.*;
+
 public class SearchEngine {
-    private final Searchable[] items;
-    private int size = 0;
+    private final List<Searchable> searchableItems = new ArrayList<>();
 
-    public SearchEngine(int capacity) {
-        items = new Searchable[capacity];
+    // Добавление объекта для поиска
+    public void add(Searchable searchable) {
+        searchableItems.add(searchable);
     }
 
-    public void add(Searchable item) {
-        if (size >= items.length) {
-            System.out.println("Невозможно добавить элемент, массив заполнен");
-            return;
-        }
-        items[size++] = item;
-    }
+    // Поиск и возвращение отсортированной мапы
+    public Map<String, Searchable> search(String query) {
+        Map<String, Searchable> resultMap = new TreeMap<>(); // TreeMap для сортировки по имени
 
-    public Searchable[] search(String query) {
-        Searchable[] results = new Searchable[5];
-        int count = 0;
-        for (int i = 0; i < size; i++) {
-            if (items[i].getSearchTerm().contains(query)) {
-                results[count++] = items[i];
-                if (count == 5) break;
+        for (Searchable item : searchableItems) {
+            if (item.getSearchTerm().toLowerCase().contains(query.toLowerCase())) {
+                resultMap.put(item.getName(), item);
+                if (resultMap.size() >= 5) break; // Максимум 5 результатов
             }
         }
-        return results;
-    }
 
-    public Searchable findBestMatch(String query) throws BestResultNotFound {
-        Searchable bestMatch = null;
-        int maxOccurrences = 0;
-        for (int i = 0; i < size; i++) {
-            int occurrences = items[i].getSearchTerm().split(query, -1).length - 1;
-            if (occurrences > maxOccurrences) {
-                maxOccurrences = occurrences;
-                bestMatch = items[i];
-            }
-        }
-        if (bestMatch == null) {
-            throw new BestResultNotFound("Не найден лучший результат для запроса: " + query);
-        }
-        return bestMatch;
+        return resultMap;
     }
 }
