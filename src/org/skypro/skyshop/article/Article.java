@@ -1,17 +1,25 @@
-package org.skypro.skyshop.search;
+package org.skypro.skyshop.product;
+
+import org.skypro.skyshop.search.Searchable;
 
 public class Article implements Searchable {
     private final String title;
-    private final String text;
+    private final String content;
 
-    public Article(String title, String text) {
+    public Article(String title, String content) {
+        if (title == null || title.trim().isEmpty()) {
+            throw new IllegalArgumentException("Название статьи не может быть пустым");
+        }
+        if (content == null || content.trim().isEmpty()) {
+            throw new IllegalArgumentException("Текст статьи не может быть пустым");
+        }
         this.title = title;
-        this.text = text;
+        this.content = content;
     }
 
     @Override
     public String getSearchTerm() {
-        return title + " " + text;
+        return title + " " + content;
     }
 
     @Override
@@ -26,6 +34,6 @@ public class Article implements Searchable {
 
     @Override
     public String toString() {
-        return title + "\n" + text;
+        return title + "\n" + content;
     }
 }
