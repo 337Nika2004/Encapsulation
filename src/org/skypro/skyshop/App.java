@@ -1,51 +1,55 @@
 package org.skypro.skyshop;
 
-import org.skypro.skyshop.basket.ProductBasket;
 import org.skypro.skyshop.product.*;
-import org.skypro.skyshop.search.*;
+import org.skypro.skyshop.article.Article;
+import org.skypro.skyshop.search.SearchEngine;
+import org.skypro.skyshop.search.BestResultNotFound;
 
 public class App {
     public static void main(String[] args) {
         try {
-            // Создаем продукты с некорректными данными для проверки исключений
-            Product invalidProduct = new SimpleProduct("", 50);
-        } catch (IllegalArgumentException e) {
-            System.out.println("Ошибка при создании продукта: " + e.getMessage());
-        }
+            Product product1 = new SimpleProduct("Laptop", 1000);
+            Product product2 = new DiscountedProduct("Smartphone", 800, 20);
+            Product product3 = new FixPriceProduct("Headphones");
 
-        try {
-            Product invalidDiscounted = new DiscountedProduct("Молоко", 0, 150);
-        } catch (IllegalArgumentException e) {
-            System.out.println("Ошибка при создании продукта: " + e.getMessage());
-        }
+            Article article1 = new Article("Tech Innovations", "The latest trends in technology.");
+            Article article2 = new Article("Gadget Reviews", "Honest reviews of the newest gadgets.");
 
-        // Создаем несколько корректных продуктов
-        Product product1 = new SimpleProduct("Яблоки", 100);
-        Product product2 = new SimpleProduct("Хлеб", 50);
-        Product product3 = new DiscountedProduct("Молоко", 80, 20);
-        Product product4 = new DiscountedProduct("Мясо", 300, 10);
-        Product product5 = new FixPriceProduct("Рыба");
-        Product product6 = new FixPriceProduct("Сок");
+            SearchEngine searchEngine = new SearchEngine(10);
+            searchEngine.add(product1);
+            searchEngine.add(product2);
+            searchEngine.add(product3);
+            searchEngine.add(article1);
+            searchEngine.add(article2);
 
-        // Создаем статьи
-        Article article1 = new Article("Полезные свойства яблок", "Яблоки содержат много витаминов.");
-        Article article2 = new Article("Почему стоит есть хлеб", "Хлеб является источником углеводов.");
+            System.out.println("Search results for 'tech':");
+            for (var result : searchEngine.search("tech")) {
+                if (result != null) {
+                    System.out.println(result.getStringRepresentation());
+                }
+            }
 
-        // Создаем движок поиска и добавляем объекты
-        SearchEngine searchEngine = new SearchEngine(10);
-        searchEngine.add(product1);
-        searchEngine.add(product2);
-        searchEngine.add(product3);
-        searchEngine.add(product4);
-        searchEngine.add(article1);
-        searchEngine.add(article2);
+            try {
+                System.out.println("Best match for 'gadget':");
+                System.out.println(searchEngine.findBestMatch("gadget").getStringRepresentation());
+            } catch (BestResultNotFound e) {
+                System.out.println("Error: " + e.getMessage());
+            }
 
-        // Тестируем новый метод поиска
-        try {
-            Searchable bestMatch = searchEngine.findBestMatch("яблоки");
-            System.out.println("Лучший результат поиска: " + bestMatch.getStringRepresentation());
-        } catch (BestResultNotFound e) {
-            System.out.println("Ошибка поиска: " + e.getMessage());
+            // Testing exception handling for invalid product data
+            try {
+                Product invalidProduct = new SimpleProduct(" ", -100);
+            } catch (IllegalArgumentException e) {
+                System.out.println("Invalid product: " + e.getMessage());
+            }
+
+            try {
+                Product invalidDiscountedProduct = new DiscountedProduct("Tablet", 500, 150);
+            } catch (IllegalArgumentException e) {
+                System.out.println("Invalid discounted product: " + e.getMessage());
+            }
+        } catch (Exception e) {
+            System.out.println("An error occurred: " + e.getMessage());
         }
     }
 }
