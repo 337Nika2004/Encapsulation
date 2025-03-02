@@ -6,7 +6,20 @@ import org.skypro.skyshop.search.*;
 
 public class App {
     public static void main(String[] args) {
-        // Создаем несколько продуктов
+        try {
+            // Создаем продукты с некорректными данными для проверки исключений
+            Product invalidProduct = new SimpleProduct("", 50);
+        } catch (IllegalArgumentException e) {
+            System.out.println("Ошибка при создании продукта: " + e.getMessage());
+        }
+
+        try {
+            Product invalidDiscounted = new DiscountedProduct("Молоко", 0, 150);
+        } catch (IllegalArgumentException e) {
+            System.out.println("Ошибка при создании продукта: " + e.getMessage());
+        }
+
+        // Создаем несколько корректных продуктов
         Product product1 = new SimpleProduct("Яблоки", 100);
         Product product2 = new SimpleProduct("Хлеб", 50);
         Product product3 = new DiscountedProduct("Молоко", 80, 20);
@@ -15,42 +28,24 @@ public class App {
         Product product6 = new FixPriceProduct("Сок");
 
         // Создаем статьи
-        Article article1 = new Article("Как выбрать свежие яблоки", "Свежие яблоки должны быть твердыми и без повреждений.");
-        Article article2 = new Article("Полезные свойства молока", "Молоко содержит кальций, который полезен для костей.");
+        Article article1 = new Article("Полезные свойства яблок", "Яблоки содержат много витаминов.");
+        Article article2 = new Article("Почему стоит есть хлеб", "Хлеб является источником углеводов.");
 
-        // Создаем корзину
-        ProductBasket basket = new ProductBasket();
-
-        // Добавляем продукты в корзину
-        basket.addProduct(product1);
-        basket.addProduct(product2);
-        basket.addProduct(product3);
-        basket.addProduct(product4);
-        basket.addProduct(product5);
-
-        // Попытка добавить продукт в заполненную корзину
-        basket.addProduct(product6);
-
-        // Печать содержимого корзины
-        basket.printBasket();
-
-        // Создаем поисковый движок
+        // Создаем движок поиска и добавляем объекты
         SearchEngine searchEngine = new SearchEngine(10);
         searchEngine.add(product1);
         searchEngine.add(product2);
         searchEngine.add(product3);
         searchEngine.add(product4);
-        searchEngine.add(product5);
-        searchEngine.add(product6);
         searchEngine.add(article1);
         searchEngine.add(article2);
 
-        // Демонстрация поиска
-        System.out.println("Результаты поиска по слову 'Молоко':");
-        for (Searchable result : searchEngine.search("Молоко")) {
-            if (result != null) {
-                System.out.println(result.getStringRepresentation());
-            }
+        // Тестируем новый метод поиска
+        try {
+            Searchable bestMatch = searchEngine.findBestMatch("яблоки");
+            System.out.println("Лучший результат поиска: " + bestMatch.getStringRepresentation());
+        } catch (BestResultNotFound e) {
+            System.out.println("Ошибка поиска: " + e.getMessage());
         }
     }
 }
